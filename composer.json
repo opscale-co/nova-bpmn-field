@@ -1,0 +1,46 @@
+{
+    "name": "opscale/nova-bpmn-field",
+    "description": "Interactive BPMN viewer and editor field for Laravel Nova.",
+    "keywords": [
+        "laravel",
+        "nova",
+        "bpmn",
+        "bpmn-js",
+        "field",
+        "visualizer"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "laravel/nova": "^5.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.15"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://nova.laravel.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Opscale\\NovaBpmnField\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Opscale\\NovaBpmnField\\FieldServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
