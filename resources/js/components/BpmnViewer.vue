@@ -1,10 +1,14 @@
 <template>
-    <div class="nova-bpmn-wrapper" :style="{ height: height + 'px' }">
-        <div ref="canvas" class="nova-bpmn-canvas"></div>
-        <div v-if="zoomControls" class="nova-bpmn-controls">
-            <button type="button" @click.prevent="zoomIn" title="Zoom in">+</button>
-            <button type="button" @click.prevent="zoomOut" title="Zoom out">−</button>
-            <button type="button" @click.prevent="zoomReset" title="Reset">⟳</button>
+    <div
+        class="nova-bpmn-wrapper"
+        :style="{ height: height + 'px' }"
+        data-testid="bpmn-viewer"
+    >
+        <div ref="canvas" class="nova-bpmn-canvas" data-testid="bpmn-canvas"></div>
+        <div v-if="zoomControls" class="nova-bpmn-controls" data-testid="bpmn-controls">
+            <button type="button" @click.prevent="zoomIn" title="Zoom in" data-testid="bpmn-zoom-in">+</button>
+            <button type="button" @click.prevent="zoomOut" title="Zoom out" data-testid="bpmn-zoom-out">−</button>
+            <button type="button" @click.prevent="zoomReset" title="Reset" data-testid="bpmn-zoom-reset">⟳</button>
         </div>
     </div>
 </template>

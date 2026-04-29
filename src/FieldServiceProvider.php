@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Opscale\NovaBpmnField;
+namespace Opscale\Fields;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;

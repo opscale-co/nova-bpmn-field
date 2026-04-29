@@ -1,13 +1,18 @@
 <template>
     <PanelItem :index="index" :field="field">
         <template #value>
-            <BpmnViewer
-                v-if="field.value"
-                :xml="field.value"
-                :height="field.height"
-                :zoom-controls="field.zoomControls"
-            />
-            <p v-else class="text-sm text-gray-500">{{ __('No BPMN diagram provided.') }}</p>
+            <div data-testid="bpmn-detail">
+                <p v-if="error" class="text-sm text-red-500" role="alert">{{ error }}</p>
+
+                <BpmnViewer
+                    v-else-if="xml"
+                    :xml="xml"
+                    :height="field.height"
+                    :zoom-controls="field.zoomControls"
+                />
+
+                <p v-else class="text-sm text-gray-500">{{ __('No BPMN diagram provided.') }}</p>
+            </div>
         </template>
     </PanelItem>
 </template>
@@ -18,5 +23,54 @@ import BpmnViewer from './BpmnViewer.vue'
 export default {
     components: { BpmnViewer },
     props: ['index', 'resource', 'resourceName', 'resourceId', 'field'],
+
+    data: () => ({
+        xml: '',
+        error: '',
+    }),
+
+    mounted() {
+        this.load()
+    },
+
+    watch: {
+        'field.previewUrl': 'load',
+        'field.value': 'load',
+    },
+
+    methods: {
+        async load() {
+            this.error = ''
+            this.xml = ''
+
+            const url = this.sameOriginUrl(this.field.previewUrl)
+            if (!url) return
+
+            try {
+                const response = await fetch(url, { credentials: 'same-origin' })
+                if (!response.ok) throw new Error(`HTTP ${response.status}`)
+                this.xml = await response.text()
+            } catch (err) {
+                this.error = this.__('Could not load the BPMN file: ') + err.message
+            }
+        },
+        sameOriginUrl(raw) {
+            if (!raw) return ''
+
+            try {
+                const parsed = new URL(raw, window.location.origin)
+                const loopback = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0'])
+                const sameOrigin = parsed.origin === window.location.origin
+                const bothLoopback = loopback.has(parsed.hostname) && loopback.has(window.location.hostname)
+
+                if (sameOrigin || bothLoopback) {
+                    return parsed.pathname + parsed.search
+                }
+                return parsed.href
+            } catch {
+                return raw
+            }
+        },
+    },
 }
 </script>

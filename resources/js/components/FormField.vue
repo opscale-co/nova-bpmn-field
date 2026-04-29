@@ -1,45 +1,57 @@
 <template>
-    <DefaultField
-        :field="currentField"
-        :errors="errors"
-        :show-help-text="showHelpText"
-        :full-width-content="true"
-    >
-        <template #field>
-            <BpmnViewer
-                v-if="currentField.readonly"
-                :xml="value"
-                :height="currentField.height"
-                :zoom-controls="currentField.zoomControls"
-            />
-            <BpmnModeler
-                v-else
-                v-model="value"
-                :height="currentField.height"
-                :properties-panel="currentField.propertiesPanel"
-                @import-error="onImportError"
-            />
-        </template>
-    </DefaultField>
+    <div data-testid="bpmn-form-field">
+        <form-file-field
+            :field="field"
+            :errors="errors"
+            :resource-name="resourceName"
+            :resource-id="resourceId"
+            :resource-relationship-name="resourceRelationshipName"
+            :related-resource-name="relatedResourceName"
+            :related-resource-id="relatedResourceId"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
+            :full-width-content="fullWidthContent"
+            :show-help-text="showHelpText"
+        />
+    </div>
 </template>
 
 <script>
-import { DependentFormField, HandlesValidationErrors } from 'laravel-nova'
-import BpmnViewer from './BpmnViewer.vue'
-import BpmnModeler from './BpmnModeler.vue'
+import { HandlesValidationErrors } from 'laravel-nova'
 
+/**
+ * We intentionally do NOT include the `FormField` mixin here.
+ *
+ * Nova's built-in File field registers its upload payload by assigning
+ * `this.field.fill = (formData) => ...` inside its mounted() — that arrow
+ * function captures the selected File object from closure. The `FormField`
+ * mixin's own mounted() ALSO does `this.field.fill = this.fill`, where
+ * `this.fill` is the generic `formData.append(attr, String(this.value))`.
+ *
+ * Because parent components mount AFTER their children in Vue's lifecycle,
+ * adding the `FormField` mixin to this wrapper would overwrite the child's
+ * upload-aware `field.fill` with the string-only default, and the BPMN file
+ * would never reach the backend.
+ *
+ * By skipping the mixin, the child's `field.fill` stays authoritative and
+ * Nova's form submission picks up the uploaded file as expected.
+ */
 export default {
-    mixins: [DependentFormField, HandlesValidationErrors],
-    components: { BpmnViewer, BpmnModeler },
-    props: ['resourceName', 'resourceId', 'field'],
+    mixins: [HandlesValidationErrors],
 
-    methods: {
-        fill(formData) {
-            formData.append(this.currentField.attribute, this.value ?? '')
-        },
-        onImportError(error) {
-            Nova.error(this.__('Invalid BPMN XML: ') + error.message)
-        },
-    },
+    props: [
+        'resourceName',
+        'resourceId',
+        'resourceRelationshipName',
+        'relatedResourceName',
+        'relatedResourceId',
+        'viaResource',
+        'viaResourceId',
+        'viaRelationship',
+        'field',
+        'fullWidthContent',
+        'showHelpText',
+    ],
 }
 </script>
