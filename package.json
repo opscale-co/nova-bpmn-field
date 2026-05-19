@@ -7,6 +7,7 @@
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "prod": "npm run production",
     "production": "mix --production",
+    "nova:install": "cd vendor/laravel/nova-devtool && npm install",
     "lint": "./vendor/bin/duster lint",
     "lint:fix": "./vendor/bin/duster fix",
     "refactor": "./vendor/bin/rector process --dry-run",

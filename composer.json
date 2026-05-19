@@ -26,6 +26,7 @@
   },
   "require-dev": {
     "larastan/larastan": "^3.9",
+    "laravel/nova-devtool": "^1.7",
     "laravel/pint": "^1.15",
     "mockery/mockery": "^1.6",
     "opscale-co/strict-rules": "^1.1",
